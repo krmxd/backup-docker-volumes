@@ -1,0 +1,23 @@
+version: "2"
+
+services:
+  backupvolumes:
+    build: ./backup_docker
+      #context: ./backup_docker
+      #dockerfile: ./backup_docker/Dockerfile
+    image: krmxd/backup_docker_volumes
+    env_file:
+      - ./config.env
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/docker/volumes:/var/lib/docker/volumes
+      - /var/lib/docker/vfs:/var/lib/docker/vfs
+      - /tmp:/backup
+
+  cron:
+    build: ./cron
+    image: krmxd/cron-backup_docker_volumes
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./:/workdir:ro
+    restart: unless-stopped
